@@ -6,6 +6,7 @@
 
 int main()
 {
+  freopen("output.txt", "w", stdout);
 	sjtu::vector<long long> v;
 	for (long long i = 0; i < 1LL << 20; ++i) {
 		v.push_back(i);

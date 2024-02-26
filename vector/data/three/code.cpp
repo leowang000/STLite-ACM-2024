@@ -45,6 +45,7 @@ void TestBint()
 
 int main()
 {
+  freopen("output.txt", "w", stdout);
 	TestInteger();
 	TestMatrix();
 	TestBint();
