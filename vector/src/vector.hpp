@@ -432,8 +432,8 @@ public:
     if (ind >= size_) {
       throw index_out_of_bound();
     }
-    if (size_ + 1 <= capacity_ / 2) {
-      size_t new_capacity = std::max(capacity_ / 2, minCapacity);
+    if (capacity_ > minCapacity && size_ + 1 <= capacity_ / 4) {
+      size_t new_capacity = std::max(capacity_ / 4, minCapacity);
       T *new_space = alloc_.allocate(new_capacity);
       Copy(new_space, first_, ind);
       Copy(new_space + ind, first_ + ind + 1, size_ - 1 - ind);
@@ -483,10 +483,6 @@ private:
     alloc_.deallocate(first_, capacity_);
   }
   void Copy(T *dest, T *src, size_t n) {
-    if (std::is_trivially_copyable<T>::value) {
-      memcpy(dest, src, n * sizeof(T));
-      return;
-    }
     for (int i = 0; i < n; i++) {
       new(dest + i) T(src[i]);
     }
