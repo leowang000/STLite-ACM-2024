@@ -43,6 +43,7 @@ bool testmerge()
 
 int main(int argc, char *const argv[])
 {
+  freopen("output.txt","w",stdout);
 	if (testmerge()) {
 		std::cout << "OKAY" << std::endl;
 	} else {

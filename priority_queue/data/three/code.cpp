@@ -202,7 +202,7 @@ void exception_test()
 }
 int main(int argc, char *const argv[])
 {
-	//freopen("testans-priority_queue-advance","w",stdout);
+	freopen("output.txt","w",stdout);
 	puts("Test Start");
 	normal_test();
 	normal_copy_test();	

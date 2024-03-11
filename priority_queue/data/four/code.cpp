@@ -205,6 +205,7 @@ void Testextra(){
 	std :: cout << std :: endl;
 }
 int main(){
+  freopen("output.txt","w",stdout);
 	TestConstructorAndPush(); 
  	TestSize();
  	TestException();

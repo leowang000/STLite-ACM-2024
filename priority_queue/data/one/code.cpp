@@ -111,9 +111,10 @@ void TestCompareException() {
 
 int main(int argc, char *const argv[])
 {
+  freopen("output.txt", "w", stdout);
 	TestConstructorAndPush();
 	TestSize();
 	TestException();
-    TestCompareException();
+  TestCompareException();
 	return 0;
 }

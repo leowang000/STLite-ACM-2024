@@ -224,6 +224,7 @@ bool check11(){
 
 
 int main(){
+  freopen("output.txt", "w", stdout);
 	check1();
     check2();
 	check3();
