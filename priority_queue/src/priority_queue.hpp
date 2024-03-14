@@ -105,14 +105,14 @@ private:
         : data_(data), left_(left), right_(right) {}
   };
 
-  Node *CopyTree(const Node *root) {
+  static Node *CopyTree(const Node *root) {
     if (root == nullptr) {
       return nullptr;
     }
     return new Node(root->data_, CopyTree(root->left_), CopyTree(root->right_));
   }
 
-  void ClearTree(const Node *root) {
+  static void ClearTree(const Node *root) {
     if (root == nullptr) {
       return;
     }
@@ -121,7 +121,7 @@ private:
     delete root;
   }
 
-  Node *MergeTree(Node *root1, Node *root2) {
+  static Node *MergeTree(Node *root1, Node *root2) {
     if (root1 == nullptr) {
       return root2;
     }
