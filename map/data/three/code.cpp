@@ -600,7 +600,7 @@ void easy_test(){
 }
 
 int main(){
-	//freopen("testans_advance.out", "w", stdout);
+	freopen("output.txt", "w", stdout);
 	srand(time(NULL));
 	easy_test();
 	if(!check1()) cout << "Test 1 Failed......" << endl; else cout << "Test 1 Passed!" << endl;
