@@ -18,8 +18,6 @@ enum Colour {
 template<class Key, class T, class KeyCompare = std::less<Key>>
 class map {
 private:
-
-
   struct RBTreeNode {
     Colour colour_;
     pair<const Key, T> data_;
@@ -488,7 +486,7 @@ private:
     return nullptr;
   }
 
-  RBTreeNode *root_, *begin_node_;
+  RBTreeNode *root_, *min_node_, *max_node_;
   size_t size_;
 
 public:
@@ -556,7 +554,7 @@ public:
         if (map_ptr_->root_ == nullptr) {
           throw invalid_iterator();
         }
-        node_ = GetMaximum(map_ptr_->root_);
+        node_ = map_ptr_->max_node_;
         return *this;
       }
       iterator old = *this;
@@ -575,7 +573,7 @@ public:
         if (map_ptr_->root_ == nullptr) {
           throw invalid_iterator();
         }
-        node_ = GetMaximum(map_ptr_->root_);
+        node_ = map_ptr_->max_node_;;
         return *this;
       }
       node_ = FindPrev(node_);
@@ -669,7 +667,7 @@ public:
         if (map_ptr_->root_ == nullptr) {
           throw invalid_iterator();
         }
-        node_ = GetMaximum(map_ptr_->root_);
+        node_ = map_ptr_->max_node_;
         return *this;
       }
       const_iterator old = *this;
@@ -688,7 +686,7 @@ public:
         if (map_ptr_->root_ == nullptr) {
           throw invalid_iterator();
         }
-        node_ = GetMaximum(map_ptr_->root_);
+        node_ = map_ptr_->max_node_;
         return *this;
       }
       node_ = FindPrev(node_);
@@ -736,11 +734,12 @@ public:
   /**
    * two constructors
    */
-  map() : size_(0), root_(nullptr), begin_node_(nullptr) {}
+  map() : size_(0), root_(nullptr), min_node_(nullptr), max_node_(nullptr) {}
 
   map(const map &other) : size_(other.size_) {
     root_ = CopyTree(other.root_);
-    begin_node_ = (root_ == nullptr ? nullptr : GetMinimum(root_));
+    min_node_ = (root_ == nullptr ? nullptr : GetMinimum(root_));
+    max_node_ = (root_ == nullptr ? nullptr : GetMaximum(root_));
   }
 
   /**
@@ -752,7 +751,8 @@ public:
     }
     ClearTree(root_);
     root_ = CopyTree(other.root_);
-    begin_node_ = (root_ == nullptr ? nullptr : GetMinimum(root_));
+    min_node_ = (root_ == nullptr ? nullptr : GetMinimum(root_));
+    max_node_ = (root_ == nullptr ? nullptr : GetMaximum(root_));
     size_ = other.size_;
     return *this;
   }
@@ -795,8 +795,8 @@ public:
     if (res == nullptr) {
       res = InsertNode(pair<const Key, T>(key, T())).first;
       size_++;
-      if (begin_node_ == nullptr || KeyCompare()(res->data_.first, begin_node_->data_.first)) {
-        begin_node_ = res;
+      if (min_node_ == nullptr || KeyCompare()(res->data_.first, min_node_->data_.first)) {
+        min_node_ = res;
       }
     }
     return res->data_.second;
@@ -817,11 +817,11 @@ public:
    * return a iterator to the beginning
    */
   iterator begin() {
-    return iterator(begin_node_, this);
+    return iterator(min_node_, this);
   }
 
   const_iterator cbegin() const {
-    return const_iterator(begin_node_, this);
+    return const_iterator(min_node_, this);
   }
 
   /**
@@ -857,7 +857,8 @@ public:
   void clear() {
     ClearTree(root_);
     root_ = nullptr;
-    begin_node_ = nullptr;
+    min_node_ = nullptr;
+    max_node_ = nullptr;
     size_ = 0;
   }
 
@@ -871,8 +872,11 @@ public:
     pair<RBTreeNode *, bool> res = InsertNode(value);
     if (res.second) {
       size_++;
-      if (begin_node_ == nullptr || KeyCompare()(value.first, begin_node_->data_.first)) {
-        begin_node_ = res.first;
+      if (min_node_ == nullptr || KeyCompare()(value.first, min_node_->data_.first)) {
+        min_node_ = res.first;
+      }
+      if (max_node_ == nullptr || KeyCompare()(max_node_->data_.first, value.first)) {
+        max_node_ = res.first;
       }
     }
     return {iterator(res.first, this), res.second};
@@ -888,8 +892,11 @@ public:
       throw invalid_iterator();
     }
     EraseNode(pos.node_);
-    if (pos.node_ == begin_node_) {
-      begin_node_ = (root_ == nullptr ? nullptr : GetMinimum(root_));
+    if (pos.node_ == min_node_) {
+      min_node_ = (root_ == nullptr ? nullptr : GetMinimum(root_));
+    }
+    if (pos.node_ == max_node_) {
+      max_node_ = (root_ == nullptr ? nullptr : GetMaximum(root_));
     }
     size_--;
   }
