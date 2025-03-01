@@ -396,10 +396,11 @@ public:
       throw index_out_of_bound();
     }
     if (size_ < capacity_ - 1) {
+      new (first_ + size_) T(value);
       for (int i = size_; i > ind; i--) {
-        new(first_ + i) T(first_[i - 1]);
+        first_[i] = first_[i - 1];
       }
-      new(first_ + ind) T(value);
+      first_[ind] = value;
       size_++;
     } else {
       T *new_space = alloc_.allocate(2 * capacity_);
@@ -442,7 +443,7 @@ public:
       size_--;
       capacity_ = new_capacity;
     } else {
-      for (int i = ind; i <= size_ - 2; i++) {
+      for (int i = ind; i + 2 <= size_; i++) {
         new(first_ + i) T(first_[i + 1]);
       }
       (first_ + size_ - 1)->~T();
